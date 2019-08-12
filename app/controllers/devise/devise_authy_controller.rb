@@ -160,7 +160,7 @@ class Devise::DeviseAuthyController < DeviseController
     @resource = send("current_#{resource_name}")
 
     if @resource.nil?
-      @resource = resource_class.find_by_id(session["#{resource_name}_id"])
+      @resource = resource_class.find(session["#{resource_name}_id"])
     end
   end
 
