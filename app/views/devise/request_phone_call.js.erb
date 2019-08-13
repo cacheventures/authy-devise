@@ -1,0 +1,13 @@
+<% if @resource %>
+	response = {
+		sent: <%= @response.ok? %>,
+		message: "<%= @response.message %>"
+		cellphone: "<%= @response.cellphone %>"
+  };
+<% else %>
+	response = {
+		sent: false,
+		message: "User couldn't be found."
+  };
+<% end %>
+console.log(response);

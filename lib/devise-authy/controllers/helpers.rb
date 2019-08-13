@@ -84,7 +84,6 @@ module DeviseAuthy
         @resource.update_attribute(:last_sign_in_with_authy, DateTime.now)
         session["#{resource_name}_authy_token_checked"] = true
         sign_in(resource_name, @resource)
-        set_flash_message(:notice, :signed_in) if is_navigational_format?
       end
     end
   end

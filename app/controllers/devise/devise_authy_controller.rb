@@ -60,9 +60,7 @@ class Devise::DeviseAuthyController < DeviseController
 
     if @authy_user.ok?
       resource.authy_id = @authy_user.id
-      if resource.save
-        set_flash_message(:notice, :enabled)
-      else
+      unless resource.save
         set_flash_message(:error, :not_enabled)
         redirect_to after_authy_enabled_path_for(resource) and return
       end
@@ -83,7 +81,7 @@ class Devise::DeviseAuthyController < DeviseController
       resource.update_attribute(:authy_id, nil)
       forget_device
 
-      set_flash_message(:notice, :disabled)
+      set_flash_message(:success, :disabled)
     else
       set_flash_message(:error, :not_disabled)
     end
@@ -92,6 +90,10 @@ class Devise::DeviseAuthyController < DeviseController
   end
 
   def GET_verify_authy_installation
+    unless resource.authy_id.present?
+      return redirect_to(url_for([resource_name, :enable_authy]))
+    end
+
     request_qr_code
     render :verify_authy_installation
   end
@@ -107,7 +109,7 @@ class Devise::DeviseAuthyController < DeviseController
 
     if token.ok? && self.resource.save
       record_authy_authentication
-      set_flash_message(:notice, :enabled)
+      set_flash_message(:success, :enabled)
       redirect_to after_authy_verified_path_for(resource)
     else
       request_qr_code
@@ -131,23 +133,19 @@ class Devise::DeviseAuthyController < DeviseController
   end
 
   def request_phone_call
-    unless @resource
-      render :json => { :sent => false, :message => "User couldn't be found." }
-      return
-    end
+    return unless @resource
 
-    response = Authy::API.request_phone_call(:id => @resource.authy_id, :force => true)
-    render :json => { :sent => response.ok?, :message => response.message }
+    @response = Authy::API.request_phone_call(
+      id: @resource.authy_id, force: true
+    )
   end
 
   def request_sms
-    unless @resource
-      render :json => {:sent => false, :message => "User couldn't be found."}
-      return
-    end
+    return unless @resource
 
-    response = Authy::API.request_sms(:id => @resource.authy_id, :force => true)
-    render :json => {:sent => response.ok?, :message => response.message}
+    # @response = Authy::API.request_sms(id: @resource.authy_id, force: true)
+    @response = Authy::API.request_sms(id: 0, force: true)
+    render :request_sms
   end
 
   private
@@ -159,6 +157,8 @@ class Devise::DeviseAuthyController < DeviseController
   end
 
   def request_qr_code
+    return nil unless resource_class.authy_enable_qr_code
+
     qr_response = Authy::API.request_qr_code(id: resource.authy_id)
     @qr_code = qr_response.qr_code if qr_response.ok?
   end

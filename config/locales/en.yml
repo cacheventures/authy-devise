@@ -2,7 +2,7 @@ en:
   devise:
     submit_token: 'Check Token'
     submit_token_title: 'Please enter your Authy token:'
-    authy_register_title: 'Enable Two factor authentication'
+    authy_register_title: 'Enable 2-Step Verification'
     enable_authy: 'Enable'
     cellphone: 'Enter your cellphone'
     country: 'Enter your country'
@@ -16,10 +16,10 @@ en:
 
     devise_authy:
       user:
-        enabled: 'Two factor authentication was enabled'
-        not_enabled: 'Something went wrong while enabling two factor authentication'
-        disabled: 'Two factor authentication was disabled'
-        not_disabled: 'Something went wrong while disabling two factor authentication'
+        enabled: '2-Step Verification was enabled.'
+        not_enabled: 'Something went wrong while enabling 2-Step Verification.'
+        disabled: '2-Step Verification was disabled.'
+        not_disabled: 'Something went wrong while disabling 2-Step Verification.'
         signed_in: 'Signed in with Authy successfully.'
-        already_enabled: 'Two factor authentication is already enabled.'
-        invalid_token: 'The entered token is invalid'
+        already_enabled: '2-Step Verification is already enabled.'
+        invalid_token: 'The entered token is invalid.'

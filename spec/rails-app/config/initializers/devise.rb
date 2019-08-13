@@ -9,6 +9,9 @@ Devise.setup do |config|
   # Should Authy OneTouch be enabled?
   # config.authy_enable_onetouch = false
 
+  # Should we generate a generic QR Code for the user?
+  # config.authy_enable_qr_code = false
+
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class with default "from" parameter.
