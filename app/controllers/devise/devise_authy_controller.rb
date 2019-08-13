@@ -143,8 +143,7 @@ class Devise::DeviseAuthyController < DeviseController
   def request_sms
     return unless @resource
 
-    # @response = Authy::API.request_sms(id: @resource.authy_id, force: true)
-    @response = Authy::API.request_sms(id: 0, force: true)
+    @response = Authy::API.request_sms(id: @resource.authy_id, force: true)
     render :request_sms
   end
 
