@@ -77,7 +77,14 @@ module DeviseAuthy
       end
 
       def send_one_touch_request
-        Authy::OneTouch.send_approval_request(id: @authy_id, message: I18n.t('request_to_login', { :scope => 'devise' }))
+        Authy::OneTouch.send_approval_request(
+          id: @authy_id,
+          message: I18n.t('request_to_login', { :scope => 'devise' }),
+          details: {
+            'Email Address' => @resource.email,
+            'IP Address' => @resource.current_sign_in_ip
+          }
+        )
       end
 
       def record_authy_authentication
