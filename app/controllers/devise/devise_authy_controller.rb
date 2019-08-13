@@ -25,7 +25,7 @@ class Devise::DeviseAuthyController < DeviseController
   def POST_verify_authy
     token = Authy::API.verify({
       :id => @resource.authy_id,
-      :token => params[:token],
+      :token => token_param,
       :force => true
     })
 
@@ -92,13 +92,14 @@ class Devise::DeviseAuthyController < DeviseController
   end
 
   def GET_verify_authy_installation
+    request_qr_code
     render :verify_authy_installation
   end
 
   def POST_verify_authy_installation
     token = Authy::API.verify({
       :id => self.resource.authy_id,
-      :token => params[:token],
+      :token => token_param,
       :force => true
     })
 
@@ -109,6 +110,7 @@ class Devise::DeviseAuthyController < DeviseController
       set_flash_message(:notice, :enabled)
       redirect_to after_authy_verified_path_for(resource)
     else
+      request_qr_code
       handle_invalid_token :verify_authy_installation, :not_enabled
     end
   end
@@ -139,7 +141,7 @@ class Devise::DeviseAuthyController < DeviseController
   end
 
   def request_sms
-    if !@resource
+    unless @resource
       render :json => {:sent => false, :message => "User couldn't be found."}
       return
     end
@@ -154,6 +156,11 @@ class Devise::DeviseAuthyController < DeviseController
     send(:"authenticate_#{resource_name}!", :force => true)
     self.resource = send("current_#{resource_name}")
     @resource = resource
+  end
+
+  def request_qr_code
+    qr_response = Authy::API.request_qr_code(id: resource.authy_id)
+    @qr_code = qr_response.qr_code if qr_response.ok?
   end
 
   def find_resource
@@ -201,5 +208,9 @@ class Devise::DeviseAuthyController < DeviseController
 
   def after_account_is_locked
     sign_out_and_redirect @resource
+  end
+
+  def token_param
+    params[:token]
   end
 end
